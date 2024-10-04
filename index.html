@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Transcription Program</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    #transcription {
+      width: 100%;
+      height: 150px;
+      font-size: 18px;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    #start-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Transcription Program</h1>
+  <button id="start-btn">Start Transcription</button>
+  <textarea id="transcription" placeholder="Your transcribed text will appear here..." disabled></textarea>
+
+  <script>
+    // Check if the browser supports SpeechRecognition API
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (window.SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.interimResults = true; // If you want to see real-time results
+      // recognition.lang = 'en-US'; // Language of the speech
+      recognition.lang = 'hi-IN'; // Language of the speech
+
+      const transcriptionBox = document.getElementById('transcription');
+      const startBtn = document.getElementById('start-btn');
+
+      // Start speech recognition when button is clicked
+      startBtn.addEventListener('click', () => {
+        recognition.start();
+        console.log("Speech recognition started...");
+        startBtn.disabled = true; // Disable the button during transcription
+      });
+
+      // Listen for speech recognition results
+      recognition.addEventListener('result', event => {
+       let transcript = '';
+        // let transcript = transcriptionBox.value + ' '; // Keep existing text
+
+        
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript; // Get the transcript
+        }
+
+        transcriptionBox.value = transcript.trim(); // Display transcription
+      });
+
+      // Handle the end of speech recognition
+      recognition.addEventListener('end', () => {
+        recognition.stop();
+        console.log("Speech recognition ended.");
+        startBtn.disabled = false; // Re-enable the button after recognition ends
+      });
+
+      // Error handling (if any)
+      recognition.addEventListener('error', (event) => {
+        console.error('Speech recognition error:', event.error);
+        startBtn.disabled = false; // Enable the button if an error occurs
+      });
+
+    } else {
+      // If SpeechRecognition API is not supported
+      alert('Sorry, your browser does not support speech recognition.');
+    }
+  </script>
+</body>
+</html>
